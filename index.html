@@ -1,0 +1,53 @@
+<!doctype html>
+
+<!-- adapted from https://threejsfundamentals.org/threejs/lessons/threejs-fundamentals.html -->
+
+
+<html>
+  <head>
+    <title>Basic Toon Shader</title>
+    <style>
+      body { margin: 0; }
+      canvas { width: 100%; height: 100%; }
+    </style>
+  </head>
+
+  <body>
+    <script src="js/three.js"></script>
+    <script type="module">
+      const canvas = document.querySelector('#c');
+      const renderer = new THREE.WebGLRenderer({canvas});
+
+      //frustum (cut off pyramid of rendered 3D space)
+      const fov = 75;
+      const aspect = 2;
+      const near = 0.1;
+      const far = 5;
+      const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
+      camera.position.z = 2;
+
+      //scene (what's drawn)
+      const scene = new THREE.Scene();
+
+      //box geometry (cube)
+      const boxWidth = 1;
+      const boxHeight = 1;
+      const boxDepth = 1;
+      const geometry = new THREE.BoxGeometry(boxWidth, boxHeight, boxDepth);
+
+      //material of geometry
+      const material = new THREE.MeshBasicMaterial({color: 0x44aa88});
+
+      //A mesh represents the combination of a Geometry (the shape of the object) and a Material (how to draw the object, shiny or flat, what color, what texture(s) to apply. Etc.) as well as the position, orientation, and scale of that object in the scene.
+      const cube = new THREE.Mesh(geometry, material);
+      //must add mesh to scene to be drawn
+      scene.add(cube);
+
+      //render scene
+      renderer.render(scene, camera);
+
+    </script>
+
+    <canvas id="c"></canvas>
+  </body>
+</html>
