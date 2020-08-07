@@ -1,50 +1,161 @@
 <!doctype html>
-
-<!-- adapted from https://threejsfundamentals.org/threejs/lessons/threejs-fundamentals.html -->
-
+<!-- citations: -->
+<!-- basic three.js code setup adapted from https://threejsfundamentals.org/threejs/lessons/threejs-fundamentals.html -->
+<!-- responsive three.js canvas adapted from https://threejsfundamentals.org/threejs/lessons/threejs-responsive.html -->
+<!-- texture and fragment shader adapted from https://www.lighthouse3d.com/tutorials/glsl-12-tutorial/toon-shader-version-ii/ -->
+<!-- hope colors in fragment shader from https://www.schemecolor.com/hope-poster-color-palette.php -->
 
 <html>
   <head>
     <title>Basic Toon Shader</title>
     <style>
-      body { margin: 0; }
-      canvas { width: 100%; height: 100%; }
+      html, body {
+        margin: 0;
+        height: 100%;
+      }
+      #c {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
     </style>
   </head>
 
   <body>
     <script src="js/three.js"></script>
     <script type="module">
-      const canvas = document.querySelector('#c');
-      const renderer = new THREE.WebGLRenderer({canvas});
+      const vShader =`
+        varying vec3 new_normal;
 
-      //frustum (cut off pyramid of rendered 3D space)
-      const fov = 75;
-      const aspect = 2;
-      const near = 0.1;
-      const far = 5;
-      const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
-      camera.position.z = 2;
+        void main()
+        {
+        new_normal = normalMatrix * normal;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
 
-      //scene (what's drawn)
-      const scene = new THREE.Scene();
+        }`
 
-      //box geometry (cube)
-      const boxWidth = 1;
-      const boxHeight = 1;
-      const boxDepth = 1;
-      const geometry = new THREE.BoxGeometry(boxWidth, boxHeight, boxDepth);
+      const fShader = `
+        uniform vec3 lightDir;
+        varying vec3 new_normal;
 
-      //material of geometry
-      const material = new THREE.MeshBasicMaterial({color: 0x44aa88});
+        void main()
+        {
+        	float intensity;
+        	vec4 color;
+        	intensity = dot(lightDir, normalize(new_normal));
 
-      //A mesh represents the combination of a Geometry (the shape of the object) and a Material (how to draw the object, shiny or flat, what color, what texture(s) to apply. Etc.) as well as the position, orientation, and scale of that object in the scene.
-      const cube = new THREE.Mesh(geometry, material);
-      //must add mesh to scene to be drawn
-      scene.add(cube);
+        	if (intensity > 10.0)
+        		color = vec4(250.0/255.0, 227.0/255.0, 173.0/255.0, 1.0);
+        	else if (intensity > 4.0)
+        		color = vec4(112.0/255.0, 150.0/255.0, 160.0/255.0, 1.0);
+        	else if (intensity > 0.75)
+        		color = vec4(218.0/255.0, 20.0/255.0, 21.0/255.0, 1.0);
+        	else
+        		color = vec4(0.0/255.0, 48.0/255.0, 80.0/255.0, 1.0);
+        	gl_FragColor = color;
 
-      //render scene
-      renderer.render(scene, camera);
+        }`
+        //tan, light blue, red, navy
+
+      function main() {
+        const canvas = document.querySelector('#c');
+        const renderer = new THREE.WebGLRenderer({canvas});
+
+        //frustum (cut off pyramid of rendered 3D space)
+        const fov = 75;
+        const aspect = 2;
+        const near = 0.1;
+        const far = 50;
+        const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
+        camera.position.z = 18;
+
+        //scene (what's drawn)
+        const scene = new THREE.Scene();
+
+        //add direct light
+        {
+        const color = 0xFFFFFF;
+        const intensity = 1;
+        const light = new THREE.DirectionalLight(color, intensity);
+        //above, behind, to the left of camera
+        light.position.set(-8, 15, 10);
+        scene.add(light);
+        }
+
+        //add ambient light
+        const color = 0xFFFFFF;
+        const intensity = 0.15;
+        const light = new THREE.AmbientLight(color, intensity);
+        scene.add(light);
+
+        //box geometry (cube)
+        // const boxWidth = 1;
+        // const boxHeight = 1;
+        // const boxDepth = 1;
+        // const geometry = new THREE.BoxGeometry(boxWidth, boxHeight, boxDepth);
+        // geometry.computeVertexNormals();
+
+        //torus geometry
+        const radius = 3.5;
+        const tubeRadius = 1.5;
+        const radialSegments = 8;
+        const tubularSegments = 64;
+        const p = 2;
+        const q = 3;
+        const geometry = new THREE.TorusKnotBufferGeometry(radius, tubeRadius, tubularSegments, radialSegments, p, q);
+
+        //uniforms for custom shader Material
+        const uniforms = {
+          lightDir: { value: { x: -8, y: 15, z: 10} },
+        }
+
+        //give geometry blinn-phong material that is affected by light
+        //const material = new THREE.MeshPhongMaterial({color: 0x44aa88, side: THREE.DoubleSide});
+        const material = new THREE.ShaderMaterial({vertexShader: vShader, fragmentShader: fShader, uniforms});
+
+        //A mesh represents the combination of a Geometry (the shape of the object) and a Material (how to draw the object, shiny or flat, what color, what texture(s) to apply. Etc.) as well as the position, orientation, and scale of that object in the scene.
+        //const cube = new THREE.Mesh(geometry, material);
+        const torus = new THREE.Mesh(geometry, material);
+        //must add mesh to scene to be drawn
+        //scene.add(cube);
+        scene.add(torus);
+
+        //check if renderer needs to be resized to have a better resolution that matches canvas's display size
+        function resizeRendererToDisplaySize(renderer) {
+          const canvas = renderer.domElement;
+          const width = canvas.clientWidth;
+          const height = canvas.clientHeight;
+          const needResize = canvas.width !== width || canvas.height !== height;
+          if (needResize) {
+            renderer.setSize(width, height, false);
+          }
+          return needResize;
+        }
+
+        //repeatedly render scene while rotating geometry's x and y
+        function render(time) {
+          time *= 0.001;  // convert time to seconds
+
+          //set the aspect of the camera to the aspect of the canvas's display size so geometry doesn't stretch
+          if (resizeRendererToDisplaySize(renderer)) {
+            const canvas = renderer.domElement;
+            camera.aspect = canvas.clientWidth / canvas.clientHeight;
+            camera.updateProjectionMatrix();
+          }
+
+          // cube.rotation.x = time;
+          // cube.rotation.y = time;
+          torus.rotation.x = time;
+          torus.rotation.y = time;
+
+          renderer.render(scene, camera);
+
+          requestAnimationFrame(render);
+        }
+        requestAnimationFrame(render);
+      }
+
+      main();
 
     </script>
 
