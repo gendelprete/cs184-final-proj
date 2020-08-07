@@ -44,11 +44,11 @@
         	vec4 color;
         	intensity = dot(lightDir, normalize(new_normal));
 
-        	if (intensity > 10.0)
+        	if (intensity > 13.0)
         		color = vec4(250.0/255.0, 227.0/255.0, 173.0/255.0, 1.0);
-        	else if (intensity > 4.0)
+        	else if (intensity > 10.0)
         		color = vec4(112.0/255.0, 150.0/255.0, 160.0/255.0, 1.0);
-        	else if (intensity > 0.75)
+        	else if (intensity > 6.0)
         		color = vec4(218.0/255.0, 20.0/255.0, 21.0/255.0, 1.0);
         	else
         		color = vec4(0.0/255.0, 48.0/255.0, 80.0/255.0, 1.0);
@@ -73,14 +73,12 @@
         const scene = new THREE.Scene();
 
         //add direct light
-        {
         const color = 0xFFFFFF;
         const intensity = 1;
         const light = new THREE.DirectionalLight(color, intensity);
         //above, behind, to the left of camera
         light.position.set(-8, 15, 10);
         scene.add(light);
-        }
 
         //add ambient light
         const color = 0xFFFFFF;
@@ -88,21 +86,11 @@
         const light = new THREE.AmbientLight(color, intensity);
         scene.add(light);
 
-        //box geometry (cube)
-        // const boxWidth = 1;
-        // const boxHeight = 1;
-        // const boxDepth = 1;
-        // const geometry = new THREE.BoxGeometry(boxWidth, boxHeight, boxDepth);
-        // geometry.computeVertexNormals();
-
-        //torus geometry
-        const radius = 3.5;
-        const tubeRadius = 1.5;
-        const radialSegments = 8;
-        const tubularSegments = 64;
-        const p = 2;
-        const q = 3;
-        const geometry = new THREE.TorusKnotBufferGeometry(radius, tubeRadius, tubularSegments, radialSegments, p, q);
+        //sphere geometry
+        const radius = 9;
+        const widthSegments = 128;
+        const heightSegments = 128;
+        const geometry = new THREE.SphereBufferGeometry(radius, widthSegments, heightSegments);
 
         //uniforms for custom shader Material
         const uniforms = {
@@ -110,15 +98,12 @@
         }
 
         //give geometry blinn-phong material that is affected by light
-        //const material = new THREE.MeshPhongMaterial({color: 0x44aa88, side: THREE.DoubleSide});
         const material = new THREE.ShaderMaterial({vertexShader: vShader, fragmentShader: fShader, uniforms});
 
         //A mesh represents the combination of a Geometry (the shape of the object) and a Material (how to draw the object, shiny or flat, what color, what texture(s) to apply. Etc.) as well as the position, orientation, and scale of that object in the scene.
-        //const cube = new THREE.Mesh(geometry, material);
-        const torus = new THREE.Mesh(geometry, material);
+        const sphere = new THREE.Mesh(geometry, material);
         //must add mesh to scene to be drawn
-        //scene.add(cube);
-        scene.add(torus);
+        scene.add(sphere);
 
         //check if renderer needs to be resized to have a better resolution that matches canvas's display size
         function resizeRendererToDisplaySize(renderer) {
@@ -143,10 +128,8 @@
             camera.updateProjectionMatrix();
           }
 
-          // cube.rotation.x = time;
-          // cube.rotation.y = time;
-          torus.rotation.x = time;
-          torus.rotation.y = time;
+          // sphere.rotation.x = time;
+          // sphere.rotation.y = time;
 
           renderer.render(scene, camera);
 
