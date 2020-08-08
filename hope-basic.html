@@ -7,7 +7,7 @@
 
 <html>
   <head>
-    <title>Basic Toon Shader</title>
+    <title>Basic "Hope" Shader</title>
     <style>
       html, body {
         margin: 0;
@@ -42,13 +42,13 @@
         {
         	float intensity;
         	vec4 color;
-        	intensity = dot(lightDir, normalize(new_normal));
+        	intensity = dot(normalize(lightDir), normalize(new_normal));
 
-        	if (intensity > 13.0)
+        	if (intensity > 0.8)
         		color = vec4(250.0/255.0, 227.0/255.0, 173.0/255.0, 1.0);
-        	else if (intensity > 10.0)
+        	else if (intensity > 0.55)
         		color = vec4(112.0/255.0, 150.0/255.0, 160.0/255.0, 1.0);
-        	else if (intensity > 6.0)
+        	else if (intensity > 0.32)
         		color = vec4(218.0/255.0, 20.0/255.0, 21.0/255.0, 1.0);
         	else
         		color = vec4(0.0/255.0, 48.0/255.0, 80.0/255.0, 1.0);
@@ -56,6 +56,7 @@
 
         }`
         //tan, light blue, red, navy
+
 
       function main() {
         const canvas = document.querySelector('#c');
@@ -73,18 +74,17 @@
         const scene = new THREE.Scene();
 
         //add direct light
-        const color = 0xFFFFFF;
-        const intensity = 1;
-        const light = new THREE.DirectionalLight(color, intensity);
+        const light_color = 0xFFFFFF;
+        const d_intensity = 1;
+        const d_light = new THREE.DirectionalLight(light_color, d_intensity);
         //above, behind, to the left of camera
-        light.position.set(-8, 15, 10);
-        scene.add(light);
+        d_light.position.set(-8, 15, 10);
+        scene.add(d_light);
 
         //add ambient light
-        const color = 0xFFFFFF;
-        const intensity = 0.15;
-        const light = new THREE.AmbientLight(color, intensity);
-        scene.add(light);
+        const a_intensity = 0.15;
+        const a_light = new THREE.AmbientLight(light_color, a_intensity);
+        scene.add(a_light);
 
         //sphere geometry
         const radius = 9;

@@ -42,19 +42,20 @@
         {
         	float intensity;
         	vec4 color;
-        	intensity = dot(lightDir, normalize(new_normal));
+        	intensity = dot(normalize(lightDir), normalize(new_normal));
 
-          if (intensity > 0.95)
-        		color = vec4(1.0,0.5,0.5,1.0);
-        	else if (intensity > 0.5)
-        		color = vec4(0.6,0.3,0.3,1.0);
-        	else if (intensity > 0.25)
-        		color = vec4(0.4,0.2,0.2,1.0);
+          if (intensity > 0.8)
+        		color = vec4(239.0/255.0, 210.0/255.0, 177.0/255.0, 0.94);
+        	else if (intensity > 0.55)
+        		color = vec4(235.0/255.0, 82.0/255.0, 6.0/255.0, 0.92);
+        	else if (intensity > 0.32)
+        		color = vec4(184.0/255.0, 79.0/255.0, 15.0/255.0, 0.72);
         	else
-        		color = vec4(0.2,0.1,0.1,1.0);
+        		color = vec4(102.0/255.0, 53.0/255.0, 31.0/255.0, 0.4);
         	gl_FragColor = color;
 
         }`
+
 
       function main() {
         const canvas = document.querySelector('#c');
@@ -72,29 +73,17 @@
         const scene = new THREE.Scene();
 
         //add direct light
-        {
-        const color = 0xFFFFFF;
-        const intensity = 1;
-        const light = new THREE.DirectionalLight(color, intensity);
+        const light_color = 0xFFFFFF;
+        const d_intensity = 1;
+        const d_light = new THREE.DirectionalLight(light_color, d_intensity);
         //above, behind, to the left of camera
-        light.position.set(-8, 15, 10);
-        scene.add(light);
-        }
+        d_light.position.set(-8, 15, 10);
+        scene.add(d_light);
 
         //add ambient light
-        const color = 0xFFFFFF;
-        const intensity = 0.15;
-        const light = new THREE.AmbientLight(color, intensity);
-        scene.add(light);
-
-        //torus geometry
-        // const radius = 3.5;
-        // const tubeRadius = 1.5;
-        // const radialSegments = 8;
-        // const tubularSegments = 64;
-        // const p = 2;
-        // const q = 3;
-        // const geometry = new THREE.TorusKnotBufferGeometry(radius, tubeRadius, tubularSegments, radialSegments, p, q);
+        const a_intensity = 0.15;
+        const a_light = new THREE.AmbientLight(light_color, a_intensity);
+        scene.add(a_light);
 
         //sphere geometry
         const radius = 9;
@@ -108,7 +97,7 @@
         }
 
         //give geometry blinn-phong material that is affected by light
-        //const material = new THREE.MeshPhongMaterial({color: 0x44aa88, side: THREE.DoubleSide});
+        //const material = new THREE.MeshPhongMaterial({color: 0x984bdb, side: THREE.DoubleSide});
         const material = new THREE.ShaderMaterial({vertexShader: vShader, fragmentShader: fShader, uniforms});
 
         //A mesh represents the combination of a Geometry (the shape of the object) and a Material (how to draw the object, shiny or flat, what color, what texture(s) to apply. Etc.) as well as the position, orientation, and scale of that object in the scene.
