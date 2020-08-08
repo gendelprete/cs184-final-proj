@@ -117,19 +117,14 @@
           return needResize;
         }
 
-        //repeatedly render scene while rotating geometry's x and y
-        function render(time) {
-          time *= 0.001;  // convert time to seconds
-
+        //render scene
+        function render() {
           //set the aspect of the camera to the aspect of the canvas's display size so geometry doesn't stretch
           if (resizeRendererToDisplaySize(renderer)) {
             const canvas = renderer.domElement;
             camera.aspect = canvas.clientWidth / canvas.clientHeight;
             camera.updateProjectionMatrix();
           }
-
-          // shape.rotation.x = time;
-          // shape.rotation.y = time;
 
           renderer.render(scene, camera);
 
