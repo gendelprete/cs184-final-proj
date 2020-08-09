@@ -88,7 +88,9 @@
 
       function main() {
         const canvas = document.querySelector('#c');
-        const renderer = new THREE.WebGLRenderer({canvas});
+        const renderer = new THREE.WebGLRenderer({canvas, antialias: true});
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        renderer.setPixelRatio( window.devicePixelRatio );
 
         //frustum (cut off pyramid of rendered 3D space)
         const fov = 75;
@@ -100,7 +102,7 @@
 
         //setup orbit controls to move camera around
         const controls = new OrbitControls(camera, canvas);
-        controls.target.set(0, 60, 0);
+        controls.target.set(0, 65, 0);
         controls.update();
 
         //scene (what's drawn)
@@ -112,6 +114,8 @@
         const d_light = new THREE.DirectionalLight(light_color, d_intensity);
         //above, behind, to the left of camera
         d_light.position.set(-50, 70, 140);
+        d_light.shadow.mapSize.width = 1024;
+        d_light.shadow.mapSize.height = 1024;
         scene.add(d_light);
 
         //add ambient light
