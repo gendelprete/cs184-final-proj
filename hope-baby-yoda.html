@@ -29,6 +29,10 @@
       import {OBJLoader2} from '/three.js-master/examples/jsm/loaders/OBJLoader2.js';
       import {OrbitControls} from '/three.js-master/examples/jsm/controls/OrbitControls.js';
       const vShader =`
+        #ifdef GL_ES
+        precision mediump float;
+        #endif
+
         varying vec3 new_normal;
 
         void main()
@@ -39,6 +43,10 @@
         }`
 
       const fShader = `
+        #ifdef GL_ES
+        precision mediump float;
+        #endif
+
         uniform vec3 lightDir;
         varying vec3 new_normal;
 

@@ -4,10 +4,11 @@
 <!-- responsive three.js canvas adapted from https://threejsfundamentals.org/threejs/lessons/threejs-responsive.html -->
 <!-- texture and fragment shader adapted from https://www.lighthouse3d.com/tutorials/glsl-12-tutorial/toon-shader-version-ii/ -->
 <!-- hope colors in fragment shader from https://www.schemecolor.com/hope-poster-color-palette.php -->
+<!-- noise and rand3D adapted from https://thebookofshaders.com/10/ and http://www.science-and-fiction.org/rendering/noise.html#:~:text=A%20noise%20function%20for%203d,contains%20a%20good%20mixture%20of -->
 
 <html>
   <head>
-    <title>Basic Toon Shader</title>
+    <title>Basic Noir Shader</title>
     <style>
       html, body {
         margin: 0;
@@ -25,6 +26,10 @@
     <script src="three.js-master/build/three.js"></script>
     <script type="module">
       const vShader =`
+        #ifdef GL_ES
+        precision mediump float;
+        #endif
+        
         varying vec3 new_normal;
 
         void main()
@@ -35,8 +40,17 @@
         }`
 
       const fShader = `
+        #ifdef GL_ES
+        precision mediump float;
+        #endif
+
         uniform vec3 lightDir;
+        uniform vec2 resolution;
         varying vec3 new_normal;
+
+        float rand3D (vec3 st) {
+          return fract(sin(dot(st.xyz, vec3(12.9898,78.233,144.7272))) * 43758.5453);
+        }
 
         void main()
         {
@@ -44,14 +58,26 @@
         	vec4 color;
         	intensity = dot(normalize(lightDir), normalize(new_normal));
 
-          if (intensity > 0.8)
-        		color = vec4(239.0/255.0, 210.0/255.0, 177.0/255.0, 0.94);
-        	else if (intensity > 0.55)
-        		color = vec4(235.0/255.0, 82.0/255.0, 6.0/255.0, 0.92);
-        	else if (intensity > 0.32)
-        		color = vec4(184.0/255.0, 79.0/255.0, 15.0/255.0, 0.72);
+          vec3 st = gl_FragCoord.xyz/vec3(resolution.xy, 1.0);
+          float rnd = rand3D(st);
+
+        	if (intensity > 0.8)
+            if (rnd <= 0.6)
+        		  color = vec4(171.0/255.0, 171.0/255.0, 171.0/255.0, 1.0);
+            else
+              color = vec4(214.0/255.0, 214.0/255.0, 214.0/255.0, 1.0);
+        	else if (intensity > 0.6)
+            if (rnd <= 0.2)
+              color = vec4(140.0/255.0, 140.0/255.0, 140.0/255.0, 1.0);
+            else
+        		  color = vec4(61.0/255.0, 61.0/255.0, 61.0/255.0, 1.0);
+        	else if (intensity > 0.001)
+        		color = vec4(2.0/255.0, 2.0/255.0, 2.0/255.0, 1.0);
         	else
-        		color = vec4(102.0/255.0, 53.0/255.0, 31.0/255.0, 0.4);
+            if (rnd <= 0.3)
+              color = vec4(233.0/255.0, 144.0/255.0, 157.0/255.0, 1.0);
+            else
+        		  color = vec4(227.0/255.0, 53.0/255.0, 79.0/255.0, 1.0);
         	gl_FragColor = color;
 
         }`
@@ -77,11 +103,11 @@
         const d_intensity = 1;
         const d_light = new THREE.DirectionalLight(light_color, d_intensity);
         //above, behind, to the left of camera
-        d_light.position.set(-8, 15, 10);
+        d_light.position.set(-8, 12, 10);
         scene.add(d_light);
 
         //add ambient light
-        const a_intensity = 0.15;
+        const a_intensity = 0.25;
         const a_light = new THREE.AmbientLight(light_color, a_intensity);
         scene.add(a_light);
 
@@ -93,18 +119,17 @@
 
         //uniforms for custom shader Material
         const uniforms = {
-          lightDir: { value: { x: -8, y: 15, z: 10} },
-          cameraDir: { value: {x: 0, y: 0, z: 18} },
+          lightDir: { value: { x: -8, y: 12, z: 10} },
+          resolution: { value: { x: renderer.domElement.clientWidth, y: renderer.domElement.clientHeight} },
         }
 
         //give geometry blinn-phong material that is affected by light
-        //const material = new THREE.MeshPhongMaterial({color: 0x984bdb, side: THREE.DoubleSide});
         const material = new THREE.ShaderMaterial({vertexShader: vShader, fragmentShader: fShader, uniforms});
 
         //A mesh represents the combination of a Geometry (the shape of the object) and a Material (how to draw the object, shiny or flat, what color, what texture(s) to apply. Etc.) as well as the position, orientation, and scale of that object in the scene.
-        const shape = new THREE.Mesh(geometry, material);
+        const sphere = new THREE.Mesh(geometry, material);
         //must add mesh to scene to be drawn
-        scene.add(shape);
+        scene.add(sphere);
 
         //check if renderer needs to be resized to have a better resolution that matches canvas's display size
         function resizeRendererToDisplaySize(renderer) {
