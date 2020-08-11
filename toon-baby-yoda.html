@@ -45,26 +45,43 @@
         void main()
         {
           float intensity;
-        	vec4 color;
         	intensity = dot(normalize(lightDir), normalize(new_normal));
 
+          vec4 color1 = vec4(239.0/255.0, 210.0/255.0, 177.0/255.0, 1.0);
+          vec4 color2 = vec4(235.0/255.0, 82.0/255.0, 6.0/255.0, 1.0);
+          vec4 color3 = vec4(184.0/255.0, 79.0/255.0, 15.0/255.0, 1.0);
+          vec4 color4 = vec4(102.0/255.0, 53.0/255.0, 31.0/255.0, 1.0);
 
-          if (intensity > 0.8)
-        		color = vec4(239.0/255.0, 210.0/255.0, 177.0/255.0, 0.94);
-        	else if (intensity > 0.55)
-        		color = vec4(235.0/255.0, 82.0/255.0, 6.0/255.0, 0.92);
-        	else if (intensity > 0.32)
-        		color = vec4(184.0/255.0, 79.0/255.0, 15.0/255.0, 0.72);
-        	else
-        		color = vec4(102.0/255.0, 53.0/255.0, 31.0/255.0, 0.4);
-        	gl_FragColor = color;
+          if (intensity > 0.8) {
+            if (intensity > 0.8 && intensity < 0.83) {
+              gl_FragColor = mix(color2, color1, abs((intensity - 0.8) / 0.03));
+            } else {
+              gl_FragColor = color1;
+            }
+        	} else if (intensity > 0.55) {
+            if (intensity > 0.55 && intensity < 0.58) {
+              gl_FragColor = mix(color3, color2, abs((intensity - 0.55) / 0.03));
+            } else {
+              gl_FragColor = color2;
+            }
+        	} else if (intensity > 0.32) {
+            if (intensity > 0.32 && intensity < 0.35) {
+              gl_FragColor = mix(color4, color3, abs((intensity - 0.32) / 0.03));
+            } else {
+              gl_FragColor = color3;
+            }
+        	} else {
+            gl_FragColor = color4;
+          }
 
         }`
 
 
       function main() {
         const canvas = document.querySelector('#c');
-        const renderer = new THREE.WebGLRenderer({canvas});
+        const renderer = new THREE.WebGLRenderer({canvas, antialias: true});
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        renderer.setPixelRatio(window.devicePixelRatio);
 
         //frustum (cut off pyramid of rendered 3D space)
         const fov = 75;
@@ -76,7 +93,7 @@
 
         //setup orbit controls to move camera around
         const controls = new OrbitControls(camera, canvas);
-        controls.target.set(0, 50, 0);
+        controls.target.set(0, 60, 0);
         controls.update();
 
         //scene (what's drawn)
@@ -88,6 +105,8 @@
         const d_light = new THREE.DirectionalLight(light_color, d_intensity);
         //above, behind, to the left of camera
         d_light.position.set(-50, 70, 140);
+        d_light.shadow.mapSize.width = 1024;
+        d_light.shadow.mapSize.height = 1024;
         scene.add(d_light);
 
         //add ambient light

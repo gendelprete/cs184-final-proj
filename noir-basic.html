@@ -29,7 +29,7 @@
         #ifdef GL_ES
         precision mediump float;
         #endif
-        
+
         varying vec3 new_normal;
 
         void main()
@@ -85,7 +85,9 @@
 
       function main() {
         const canvas = document.querySelector('#c');
-        const renderer = new THREE.WebGLRenderer({canvas});
+        const renderer = new THREE.WebGLRenderer({canvas, antialias: true});
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        renderer.setPixelRatio(window.devicePixelRatio);
 
         //frustum (cut off pyramid of rendered 3D space)
         const fov = 75;
@@ -104,6 +106,8 @@
         const d_light = new THREE.DirectionalLight(light_color, d_intensity);
         //above, behind, to the left of camera
         d_light.position.set(-8, 12, 10);
+        d_light.shadow.mapSize.width = 1024;
+        d_light.shadow.mapSize.height = 1024;
         scene.add(d_light);
 
         //add ambient light
