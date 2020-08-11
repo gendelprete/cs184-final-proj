@@ -58,21 +58,32 @@
 
         	intensity = dot(normalize(lightDir), normalize(new_normal));
 
-        	if (intensity > 0.85) {
-            alpha = smoothstep(0.85, 0.87, intensity);
-        		color = vec4((250.0 * alpha)/255.0, (227.0 * alpha)/255.0, (173.0 * alpha)/255.0, 1.0);
-        	} else if (intensity > 0.6) {
-            alpha = smoothstep(0.6, 0.62, intensity);
-        		color = vec4((112.0 * alpha)/255.0, (150.0 * alpha)/255.0, (160.0 * alpha)/255.0, 1.0);
-        	} else if (intensity > 0.35) {
-            alpha = smoothstep(0.35, 0.37, intensity);
-        		color = vec4((218.0 * alpha)/255.0, (20.0 * alpha)/255.0, (21.0 * alpha)/255.0, 1.0);
-        	} else {
-            alpha = smoothstep(0.0, 0.02, intensity);
-        		color = vec4((0.0 * alpha)/255.0, (48.0 * alpha)/255.0, (80.0 * alpha)/255.0, 1.0);
-          }
-        	gl_FragColor = color;
+          vec4 color1 = vec4(250.0/255.0, 227.0/255.0, 173.0/255.0, 1.0);
+          vec4 color2 = vec4(112.0/255.0, 150.0/255.0, 160.0/255.0, 1.0);
+          vec4 color3 = vec4(218.0/255.0, 20.0/255.0, 21.0/255.0, 1.0);
+          vec4 color4 = vec4(0.0/255.0, 48.0/255.0, 80.0/255.0, 1.0);
 
+          if (intensity > 0.8) {
+            if (intensity > 0.8 && intensity < 0.85) {
+              gl_FragColor = mix(color2, color1, abs((intensity - 0.8) / 0.05));
+            } else {
+              gl_FragColor = color1;
+            }
+        	} else if (intensity > 0.55) {
+            if (intensity > 0.55 && intensity < 0.6) {
+              gl_FragColor = mix(color3, color2, abs((intensity - 0.55) / 0.05));
+            } else {
+              gl_FragColor = color2;
+            }
+        	} else if (intensity > 0.32) {
+            if (intensity > 0.32 && intensity < 0.37) {
+              gl_FragColor = mix(color4, color3, abs((intensity - 0.32) / 0.05));
+            } else {
+              gl_FragColor = color3;
+            }
+        	} else {
+            gl_FragColor = color4;
+          }
         }`
         //tan, light blue, red, navy
 

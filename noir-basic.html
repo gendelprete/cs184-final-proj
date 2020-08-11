@@ -25,6 +25,7 @@
   <body>
     <script src="three.js-master/build/three.js"></script>
     <script type="module">
+      import {OrbitControls} from '/three.js-master/examples/jsm/controls/OrbitControls.js';
       const vShader =`
         #ifdef GL_ES
         precision mediump float;
@@ -55,31 +56,41 @@
         void main()
         {
         	float intensity;
-        	vec4 color;
         	intensity = dot(normalize(lightDir), normalize(new_normal));
 
           vec3 st = gl_FragCoord.xyz/vec3(resolution.xy, 1.0);
           float rnd = rand3D(st);
 
-        	if (intensity > 0.8)
-            if (rnd <= 0.6)
-        		  color = vec4(171.0/255.0, 171.0/255.0, 171.0/255.0, 1.0);
-            else
-              color = vec4(214.0/255.0, 214.0/255.0, 214.0/255.0, 1.0);
-        	else if (intensity > 0.6)
-            if (rnd <= 0.2)
-              color = vec4(140.0/255.0, 140.0/255.0, 140.0/255.0, 1.0);
-            else
-        		  color = vec4(61.0/255.0, 61.0/255.0, 61.0/255.0, 1.0);
-        	else if (intensity > 0.001)
-        		color = vec4(2.0/255.0, 2.0/255.0, 2.0/255.0, 1.0);
-        	else
-            if (rnd <= 0.3)
-              color = vec4(233.0/255.0, 144.0/255.0, 157.0/255.0, 1.0);
-            else
-        		  color = vec4(227.0/255.0, 53.0/255.0, 79.0/255.0, 1.0);
-        	gl_FragColor = color;
+          vec4 color1 = vec4(214.0/255.0, 214.0/255.0, 214.0/255.0, 1.0);
+          vec4 noise1 = vec4(171.0/255.0, 171.0/255.0, 171.0/255.0, 1.0);
+          vec4 color2 = vec4(61.0/255.0, 61.0/255.0, 61.0/255.0, 1.0);
+          vec4 noise2 = vec4(140.0/255.0, 140.0/255.0, 140.0/255.0, 1.0);
+          vec4 color3 = vec4(2.0/255.0, 2.0/255.0, 2.0/255.0, 1.0);
+          vec4 noise3 = vec4(233.0/255.0, 144.0/255.0, 157.0/255.0, 1.0);
+          vec4 color4 = vec4(227.0/255.0, 53.0/255.0, 79.0/255.0, 1.0);
 
+
+        	if (intensity > 0.85) {
+            if (rnd <= 0.6) {
+        		  gl_FragColor = noise1;
+            } else {
+              gl_FragColor = color1;
+            }
+        	} else if (intensity > 0.7) {
+            if (rnd <= 0.2) {
+              gl_FragColor = noise2;
+            } else {
+              gl_FragColor = color2;
+            }
+        	} else if (intensity > 0.001) {
+        		gl_FragColor = color3;
+        	} else {
+            if (rnd <= 0.3) {
+              gl_FragColor = noise3;
+            } else {
+              gl_FragColor = color4;
+            }
+          }
         }`
 
 
@@ -96,6 +107,11 @@
         const far = 50;
         const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
         camera.position.z = 18;
+
+        //setup orbit controls to move camera around
+        const controls = new OrbitControls(camera, canvas);
+        controls.target.set(0, 0, 0);
+        controls.update();
 
         //scene (what's drawn)
         const scene = new THREE.Scene();

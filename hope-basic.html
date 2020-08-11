@@ -41,19 +41,22 @@
         void main()
         {
         	float intensity;
-        	vec4 color;
         	intensity = dot(normalize(lightDir), normalize(new_normal));
 
-        	if (intensity > 0.8)
-        		color = vec4(250.0/255.0, 227.0/255.0, 173.0/255.0, 1.0);
-        	else if (intensity > 0.55)
-        		color = vec4(112.0/255.0, 150.0/255.0, 160.0/255.0, 1.0);
-        	else if (intensity > 0.32)
-        		color = vec4(218.0/255.0, 20.0/255.0, 21.0/255.0, 1.0);
-        	else
-        		color = vec4(0.0/255.0, 48.0/255.0, 80.0/255.0, 1.0);
-        	gl_FragColor = color;
+          vec4 color1 = vec4(250.0/255.0, 227.0/255.0, 173.0/255.0, 1.0);
+          vec4 color2 = vec4(112.0/255.0, 150.0/255.0, 160.0/255.0, 1.0);
+          vec4 color3 = vec4(218.0/255.0, 20.0/255.0, 21.0/255.0, 1.0);
+          vec4 color4 = vec4(0.0/255.0, 48.0/255.0, 80.0/255.0, 1.0);
 
+          if (intensity > 0.8) {
+            gl_FragColor = color1;
+        	} else if (intensity > 0.55) {
+            gl_FragColor = color2;
+        	} else if (intensity > 0.32) {
+            gl_FragColor = color3;
+        	} else {
+            gl_FragColor = color4;
+          }
         }`
         //tan, light blue, red, navy
 

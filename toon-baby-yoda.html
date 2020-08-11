@@ -53,20 +53,20 @@
           vec4 color4 = vec4(102.0/255.0, 53.0/255.0, 31.0/255.0, 1.0);
 
           if (intensity > 0.8) {
-            if (intensity > 0.8 && intensity < 0.83) {
-              gl_FragColor = mix(color2, color1, abs((intensity - 0.8) / 0.03));
+            if (intensity > 0.8 && intensity < 0.85) {
+              gl_FragColor = mix(color2, color1, abs((intensity - 0.8) / 0.05));
             } else {
               gl_FragColor = color1;
             }
         	} else if (intensity > 0.55) {
-            if (intensity > 0.55 && intensity < 0.58) {
-              gl_FragColor = mix(color3, color2, abs((intensity - 0.55) / 0.03));
+            if (intensity > 0.55 && intensity < 0.6) {
+              gl_FragColor = mix(color3, color2, abs((intensity - 0.55) / 0.05));
             } else {
               gl_FragColor = color2;
             }
         	} else if (intensity > 0.32) {
-            if (intensity > 0.32 && intensity < 0.35) {
-              gl_FragColor = mix(color4, color3, abs((intensity - 0.32) / 0.03));
+            if (intensity > 0.32 && intensity < 0.37) {
+              gl_FragColor = mix(color4, color3, abs((intensity - 0.32) / 0.05));
             } else {
               gl_FragColor = color3;
             }
@@ -93,7 +93,7 @@
 
         //setup orbit controls to move camera around
         const controls = new OrbitControls(camera, canvas);
-        controls.target.set(0, 60, 0);
+        controls.target.set(0, 45, 0);
         controls.update();
 
         //scene (what's drawn)

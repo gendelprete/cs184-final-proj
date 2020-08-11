@@ -24,6 +24,7 @@
   <body>
     <script src="three.js-master/build/three.js"></script>
     <script type="module">
+      import {OrbitControls} from '/three.js-master/examples/jsm/controls/OrbitControls.js';
       const vShader =`
         varying vec3 new_normal;
 
@@ -41,18 +42,22 @@
         void main()
         {
         	float intensity;
-        	vec4 color;
         	intensity = dot(normalize(lightDir), normalize(new_normal));
 
-          if (intensity > 0.8)
-        		color = vec4(239.0/255.0, 210.0/255.0, 177.0/255.0, 0.94);
-        	else if (intensity > 0.55)
-        		color = vec4(235.0/255.0, 82.0/255.0, 6.0/255.0, 0.92);
-        	else if (intensity > 0.32)
-        		color = vec4(184.0/255.0, 79.0/255.0, 15.0/255.0, 0.72);
-        	else
-        		color = vec4(102.0/255.0, 53.0/255.0, 31.0/255.0, 0.4);
-        	gl_FragColor = color;
+          vec4 color1 = vec4(239.0/255.0, 210.0/255.0, 177.0/255.0, 1.0);
+          vec4 color2 = vec4(235.0/255.0, 82.0/255.0, 6.0/255.0, 1.0);
+          vec4 color3 = vec4(184.0/255.0, 79.0/255.0, 15.0/255.0, 1.0);
+          vec4 color4 = vec4(102.0/255.0, 53.0/255.0, 31.0/255.0, 1.0);
+
+          if (intensity > 0.8) {
+            gl_FragColor = color1;
+        	} else if (intensity > 0.55) {
+            gl_FragColor = color2;
+        	} else if (intensity > 0.32) {
+            gl_FragColor = color3;
+        	} else {
+            gl_FragColor = color4;
+          }
 
         }`
 
@@ -70,6 +75,11 @@
         const far = 50;
         const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
         camera.position.z = 18;
+
+        //setup orbit controls to move camera around
+        const controls = new OrbitControls(camera, canvas);
+        controls.target.set(0, 0, 0);
+        controls.update();
 
         //scene (what's drawn)
         const scene = new THREE.Scene();
