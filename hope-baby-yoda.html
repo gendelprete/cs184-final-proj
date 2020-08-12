@@ -3,13 +3,15 @@
 <!-- basic three.js code setup adapted from https://threejsfundamentals.org/threejs/lessons/threejs-fundamentals.html -->
 <!-- responsive three.js canvas adapted from https://threejsfundamentals.org/threejs/lessons/threejs-responsive.html -->
 <!-- texture and fragment shader adapted from https://www.lighthouse3d.com/tutorials/glsl-12-tutorial/toon-shader-version-ii/ -->
+<!-- Baby Yoda .obj from https://www.thingiverse.com/thing:4038181 -->
 <!-- hope color scheme in fragment shader from https://www.schemecolor.com/hope-poster-color-palette.php -->
 <!-- objLoader2 adapted from https://threejsfundamentals.org/threejs/lessons/threejs-load-obj.html#toc and https://blender.stackexchange.com/questions/64932/using-three-js-how-to-add-texture-to-obj-object-->
-
+<!-- halftone shader adapted from http://weber.itn.liu.se/~stegu/webglshadertutorial/shadertutorial.html -->
+<!-- screen space uv coordinates adapted from https://gamedev.stackexchange.com/questions/129139/how-do-i-calculate-uv-space-from-world-space-in-the-fragment-shader and https://letsbuild.gg/sketchpunk/screen-space-halftone-shader-1f8c-->
 
 <html>
   <head>
-    <title>Basic "Hope" Shader</title>
+    <title>Baby Yoda "Hope" Shader</title>
     <style>
       html, body {
         margin: 0;
@@ -34,11 +36,13 @@
         #endif
 
         varying vec3 new_normal;
+        varying vec4 sp_pos;
 
         void main()
         {
         new_normal = normalMatrix * normal;
         gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        sp_pos = gl_Position;
 
         }`
 
@@ -48,44 +52,56 @@
         #endif
 
         uniform vec3 lightDir;
-        varying vec3 new_normal;
+        uniform vec2 resolution;
+        varying vec3 new_normal; //screen space normal
+        varying vec4 sp_pos; //screen space normal
 
         void main()
         {
         	float intensity;
-        	vec4 color;
-          float alpha;
-
         	intensity = dot(normalize(lightDir), normalize(new_normal));
 
-          vec4 color1 = vec4(250.0/255.0, 227.0/255.0, 173.0/255.0, 1.0);
-          vec4 color2 = vec4(112.0/255.0, 150.0/255.0, 160.0/255.0, 1.0);
-          vec4 color3 = vec4(218.0/255.0, 20.0/255.0, 21.0/255.0, 1.0);
-          vec4 color4 = vec4(0.0/255.0, 48.0/255.0, 80.0/255.0, 1.0);
+          vec4 color1 = vec4(250.0/255.0, 227.0/255.0, 173.0/255.0, 1.0); //tan
+          vec4 color2 = vec4(112.0/255.0, 150.0/255.0, 160.0/255.0, 1.0); //light blue
+          vec4 color3 = vec4(218.0/255.0, 20.0/255.0, 21.0/255.0, 1.0); //red
+          vec4 color4 = vec4(0.0/255.0, 48.0/255.0, 80.0/255.0, 1.0); //navy
 
-          if (intensity > 0.8) {
-            if (intensity > 0.8 && intensity < 0.85) {
-              gl_FragColor = mix(color2, color1, abs((intensity - 0.8) / 0.05));
+          mat2 rot45 = mat2(0.707, -0.707, 0.707, 0.707); //2d rotation matrix
+
+          if (intensity > 0.85) {
+            if (intensity > 0.85 && intensity < 0.9) {
+              gl_FragColor = mix(color2, color1, abs((intensity - 0.85) / 0.05));
             } else {
               gl_FragColor = color1;
             }
-        	} else if (intensity > 0.55) {
-            if (intensity > 0.55 && intensity < 0.6) {
-              gl_FragColor = mix(color3, color2, abs((intensity - 0.55) / 0.05));
+          } else if (intensity > 0.75) {
+            vec2 screen_uv = (sp_pos.xy / sp_pos.w) * 0.5 + 0.5; // scale by w component from projection matrix for perspective correctness and keep within [0, 1] range
+            vec2 rot_uv = rot45 * screen_uv; // rotate 45 deg for better horizontal and vertical perception
+
+            vec2 nearest	= fract(120.0 * rot_uv) * 2.0 - 1.0; // pos of nearest point in grid of circles mapped to [-1, 1] with frequency of grid 120 * 120
+            float dist = length(nearest); //dist to nearest point
+            float radius = 0.3;
+
+            float frag_width = fwidth(dist); //sqrt of sum of difference between dist at curr pixel and neighbor in x and y directions (overall change between pixels - similar to mip map)
+            float pixel_step = smoothstep(radius - frag_width, radius + frag_width, dist); // antialias using width of fragment so that fragments near edge of circle take on mixed color values (filter high frequencies)
+            vec4 fragcolor = mix(color1, color2, pixel_step); //linear interpolation between two colors
+            gl_FragColor = fragcolor;
+          } else if (intensity > 0.6) {
+            if (intensity > 0.6 && intensity < 0.65) {
+              gl_FragColor = mix(color3, color2, abs((intensity - 0.6) / 0.05));
             } else {
               gl_FragColor = color2;
             }
-        	} else if (intensity > 0.32) {
+          } else if (intensity > 0.32) {
             if (intensity > 0.32 && intensity < 0.37) {
               gl_FragColor = mix(color4, color3, abs((intensity - 0.32) / 0.05));
             } else {
               gl_FragColor = color3;
             }
-        	} else {
+          } else {
             gl_FragColor = color4;
           }
         }`
-        //tan, light blue, red, navy
 
 
       function main() {

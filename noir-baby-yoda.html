@@ -3,13 +3,14 @@
 <!-- basic three.js code setup adapted from https://threejsfundamentals.org/threejs/lessons/threejs-fundamentals.html -->
 <!-- responsive three.js canvas adapted from https://threejsfundamentals.org/threejs/lessons/threejs-responsive.html -->
 <!-- texture and fragment shader adapted from https://www.lighthouse3d.com/tutorials/glsl-12-tutorial/toon-shader-version-ii/ -->
+<!-- Baby Yoda .obj from https://www.thingiverse.com/thing:4038181 -->
 <!-- noise and rand3D adapted from https://thebookofshaders.com/10/ and http://www.science-and-fiction.org/rendering/noise.html#:~:text=A%20noise%20function%20for%203d,contains%20a%20good%20mixture%20of -->
 <!-- objLoader2 adapted from https://threejsfundamentals.org/threejs/lessons/threejs-load-obj.html#toc and https://blender.stackexchange.com/questions/64932/using-three-js-how-to-add-texture-to-obj-object-->
 
 
 <html>
   <head>
-    <title>Basic "Hope" Shader</title>
+    <title>Baby Yoda Noir Shader</title>
     <style>
       html, body {
         margin: 0;
@@ -63,13 +64,13 @@
           vec3 st = gl_FragCoord.xyz/vec3(resolution.xy, 1.0);
           float rnd = rand3D(st);
 
-          vec4 color1 = vec4(214.0/255.0, 214.0/255.0, 214.0/255.0, 1.0);
-          vec4 noise1 = vec4(171.0/255.0, 171.0/255.0, 171.0/255.0, 1.0);
-          vec4 color2 = vec4(61.0/255.0, 61.0/255.0, 61.0/255.0, 1.0);
-          vec4 noise2 = vec4(140.0/255.0, 140.0/255.0, 140.0/255.0, 1.0);
-          vec4 color3 = vec4(2.0/255.0, 2.0/255.0, 2.0/255.0, 1.0);
-          vec4 noise3 = vec4(233.0/255.0, 144.0/255.0, 157.0/255.0, 1.0);
-          vec4 color4 = vec4(227.0/255.0, 53.0/255.0, 79.0/255.0, 1.0);
+          vec4 color1 = vec4(214.0/255.0, 214.0/255.0, 214.0/255.0, 1.0); //light gray
+          vec4 noise1 = vec4(171.0/255.0, 171.0/255.0, 171.0/255.0, 1.0); //light noise
+          vec4 color2 = vec4(61.0/255.0, 61.0/255.0, 61.0/255.0, 1.0); //gray
+          vec4 noise2 = vec4(140.0/255.0, 140.0/255.0, 140.0/255.0, 1.0); //gray noise
+          vec4 color3 = vec4(2.0/255.0, 2.0/255.0, 2.0/255.0, 1.0); //dark gray
+          vec4 noise3 = vec4(233.0/255.0, 144.0/255.0, 157.0/255.0, 1.0); //dark gray noise
+          vec4 color4 = vec4(227.0/255.0, 53.0/255.0, 79.0/255.0, 1.0); //coral
 
 
         	if (intensity > 0.85) {
