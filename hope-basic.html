@@ -4,6 +4,7 @@
 <!-- responsive three.js canvas adapted from https://threejsfundamentals.org/threejs/lessons/threejs-responsive.html -->
 <!-- texture and fragment shader adapted from https://www.lighthouse3d.com/tutorials/glsl-12-tutorial/toon-shader-version-ii/ -->
 <!-- hope colors in fragment shader from https://www.schemecolor.com/hope-poster-color-palette.php -->
+<!-- halftone shader adapted from http://weber.itn.liu.se/~stegu/webglshadertutorial/shadertutorial.html -->
 
 <html>
   <head>
@@ -26,10 +27,12 @@
     <script type="module">
       const vShader =`
         varying vec3 new_normal;
+        varying vec2 v_uv;
 
         void main()
         {
         new_normal = normalMatrix * normal;
+        v_uv = uv;
         gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
 
         }`
@@ -37,6 +40,12 @@
       const fShader = `
         uniform vec3 lightDir;
         varying vec3 new_normal;
+        varying vec2 v_uv;
+
+        float aastep(float threshold, float value) {
+          float afwidth = 0.7 * length(vec2(dFdx(value), dFdy(value)));
+          return smoothstep(threshold-afwidth, threshold+afwidth, value);
+        }
 
         void main()
         {
@@ -48,8 +57,14 @@
           vec4 color3 = vec4(218.0/255.0, 20.0/255.0, 21.0/255.0, 1.0);
           vec4 color4 = vec4(0.0/255.0, 48.0/255.0, 80.0/255.0, 1.0);
 
-          if (intensity > 0.8) {
+          if (intensity > 0.85) {
             gl_FragColor = color1;
+          } else if (intensity > 0.7) {
+            vec2 nearest = 2.0*fract(150.0 * v_uv) - 1.0;
+            float dist = length(nearest);
+            float radius = 0.6;
+            vec4 fragcolor = mix(color1, color2, aastep(radius, dist));
+            gl_FragColor = fragcolor;
         	} else if (intensity > 0.55) {
             gl_FragColor = color2;
         	} else if (intensity > 0.32) {
