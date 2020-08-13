@@ -3,8 +3,7 @@
 <!-- basic three.js code setup adapted from https://threejsfundamentals.org/threejs/lessons/threejs-fundamentals.html -->
 <!-- responsive three.js canvas adapted from https://threejsfundamentals.org/threejs/lessons/threejs-responsive.html -->
 <!-- texture and fragment shader adapted from https://www.lighthouse3d.com/tutorials/glsl-12-tutorial/toon-shader-version-ii/ -->
-<!-- hope colors in fragment shader from https://www.schemecolor.com/hope-poster-color-palette.php -->
-<!-- noise and rand3D adapted from https://thebookofshaders.com/10/ and http://www.science-and-fiction.org/rendering/noise.html#:~:text=A%20noise%20function%20for%203d,contains%20a%20good%20mixture%20of -->
+<!-- noise and rand3D adapted from https://thebookofshaders.com/10/ and http://www.science-and-fiction.org/rendering/noise.html -->
 
 <html>
   <head>
@@ -68,7 +67,6 @@
           vec4 color3 = vec4(2.0/255.0, 2.0/255.0, 2.0/255.0, 1.0); //dark gray
           vec4 noise3 = vec4(233.0/255.0, 144.0/255.0, 157.0/255.0, 1.0); //dark gray noise
           vec4 color4 = vec4(227.0/255.0, 53.0/255.0, 79.0/255.0, 1.0); //coral
-
 
         	if (intensity > 0.85) {
             if (rnd <= 0.6) {

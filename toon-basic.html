@@ -30,8 +30,8 @@
 
         void main()
         {
-        new_normal = normalMatrix * normal;
-        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        new_normal = normalMatrix * normal; //world space
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); //screen space
 
         }`
 
