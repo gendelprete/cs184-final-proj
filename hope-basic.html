@@ -27,12 +27,12 @@
     <script type="module">
       import {OrbitControls} from '/three.js-master/examples/jsm/controls/OrbitControls.js';
       const vShader =`
-        varying vec3 new_normal;
+        varying vec3 world_normal;
         varying vec2 v_uv;
 
         void main()
         {
-        new_normal = normalMatrix * normal;
+        world_normal = normalMatrix * normal;
         v_uv = uv;
         gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
 
@@ -44,13 +44,13 @@
         #endif
 
         uniform vec3 lightDir;
-        varying vec3 new_normal;
+        varying vec3 world_normal;
         varying vec2 v_uv;
 
         void main()
         {
         	float intensity;
-        	intensity = dot(normalize(lightDir), normalize(new_normal));
+        	intensity = dot(normalize(lightDir), normalize(world_normal));
 
           vec4 color1 = vec4(250.0/255.0, 227.0/255.0, 173.0/255.0, 1.0);
           vec4 color2 = vec4(112.0/255.0, 150.0/255.0, 160.0/255.0, 1.0);

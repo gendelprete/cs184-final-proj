@@ -36,12 +36,12 @@
         precision mediump float;
         #endif
 
-        varying vec3 new_normal;
+        varying vec3 world_normal;
         varying vec4 sp_pos;
 
         void main()
         {
-        new_normal = normalMatrix * normal;
+        world_normal = normalMatrix * normal;
         gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
         sp_pos = gl_Position;
 
@@ -55,13 +55,13 @@
         #endif
 
         uniform vec3 lightDir;
-        varying vec3 new_normal; //screen space normal
+        varying vec3 world_normal; //screen space normal
         varying vec4 sp_pos; //screen space position
 
         void main()
         {
         	float intensity;
-        	intensity = dot(normalize(lightDir), normalize(new_normal));
+        	intensity = dot(normalize(lightDir), normalize(world_normal));
 
           vec4 color1 = vec4(250.0/255.0, 227.0/255.0, 173.0/255.0, 1.0); //tan
           vec4 color2 = vec4(112.0/255.0, 150.0/255.0, 160.0/255.0, 1.0); //light blue
@@ -157,7 +157,7 @@
         //give geometry custom shader material
         const material = new THREE.ShaderMaterial({vertexShader: vShader, fragmentShader: fShader, uniforms});
 
-        //load Baby_Yoda.obj mesh
+        //load Baby_Yoda.obj model and traverse to add material and compute vertex normals for all meshes in model
         const objLoader = new OBJLoader2();
         objLoader.load('Baby_Yoda.obj', function (yoda) {
 

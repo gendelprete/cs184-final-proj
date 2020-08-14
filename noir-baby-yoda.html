@@ -34,11 +34,11 @@
         precision mediump float;
         #endif
 
-        varying vec3 new_normal;
+        varying vec3 world_normal;
 
         void main()
         {
-        new_normal = normalMatrix * normal;
+        world_normal = normalMatrix * normal;
         gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
 
         }`
@@ -50,7 +50,7 @@
 
         uniform vec3 lightDir;
         uniform vec2 resolution;
-        varying vec3 new_normal;
+        varying vec3 world_normal;
 
         float rand3D (vec3 st) {
           return fract(sin(dot(st.xyz, vec3(12.9898,78.233,144.7272))) * 43758.5453);
@@ -59,7 +59,7 @@
         void main()
         {
         	float intensity;
-        	intensity = dot(normalize(lightDir), normalize(new_normal));
+        	intensity = dot(normalize(lightDir), normalize(world_normal));
 
           vec3 st = gl_FragCoord.xyz/vec3(resolution.xy, 1.0);
           float rnd = rand3D(st);
