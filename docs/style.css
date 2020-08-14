@@ -153,26 +153,6 @@ h3 {
   }
 }
 
-/* Main Photo */
-#main-photo-div {
-  max-width: 500px;
-  margin: auto;
-  margin-bottom: 50px;
-}
-
-#main-photo-img {
-  width: 100%;
-  height: auto;
-}
-
-@media screen and (max-width: 600px) {
-  #main-photo-div {
-    width: 80vw;
-    margin: auto;
-    margin-bottom: 50px;
-  }
-}
-
 /* Other Photos */
 .other-div {
   max-width: 800px;
@@ -186,6 +166,13 @@ h3 {
   height: auto;
 }
 
+.smaller {
+  max-width: 350px;
+  margin: auto;
+  margin-top: 50px;
+  margin-bottom: 50px;
+}
+
 @media screen and (max-width: 600px) {
   .other-div {
     width: 80vw;
@@ -193,15 +180,7 @@ h3 {
     margin-top: 50px;
     margin-bottom: 50px;
   }
-}
 
-.smaller {
-  max-width: 350px;
-  margin: auto;
-  margin-top: 50px;
-  margin-bottom: 50px;
-}
-@media screen and (max-width: 600px) {
   .smaller {
     width: 80vw;
     margin: auto;
