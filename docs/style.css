@@ -42,6 +42,7 @@ a:hover {
 a {
   text-decoration: none;
   color: #EF3A4A;
+  font-family: 'Poppins', sans-serif;
 }
 
 .space {
@@ -88,6 +89,7 @@ h2 {
   font-size: 24px;
   font-weight: 700;
   color: #EF3A4A;
+  margin-top: 50px;
 }
 
 @media screen and (max-width: 600px) {
@@ -97,6 +99,20 @@ h2 {
   }
   #title {
     margin-bottom: 50px;
+  }
+}
+
+h3 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: #444444;
+}
+
+@media screen and (max-width: 600px) {
+  h3 {
+    font-size: 18px;
+    margin: 10px 0px 0px 0px;
   }
 }
 
@@ -172,6 +188,21 @@ h2 {
 
 @media screen and (max-width: 600px) {
   .other-div {
+    width: 80vw;
+    margin: auto;
+    margin-top: 50px;
+    margin-bottom: 50px;
+  }
+}
+
+.smaller {
+  max-width: 350px;
+  margin: auto;
+  margin-top: 50px;
+  margin-bottom: 50px;
+}
+@media screen and (max-width: 600px) {
+  .smaller {
     width: 80vw;
     margin: auto;
     margin-top: 50px;
