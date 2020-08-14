@@ -1,4 +1,5 @@
 # cs184-final-proj
 
-## "GLSL NPR Shaders"
-## CS184 Su20 Final Project at UC Berkeley
+"GLSL NPR Toon Shaders"  
+CS184 Summer 20 Final Project  
+UC Berkeley
